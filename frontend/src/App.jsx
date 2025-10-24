@@ -3,17 +3,22 @@ import './App.css'
 
 // Components
 import Inicio from './components/inicio/Inicio';
+import Header from './components/header/Header';
+import Registro from './components/registro/Registro';
 import Box from './components/box/Box';
 import Menu from './components/menu/Menu';
 
 function App() {
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
         {/* Home muestra Inicio */}
         <Route path='/' element={<Inicio />} />
         {/* Alias antiguo redirige a home */}
         <Route path='/inicio' element={<Navigate to="/" replace />} />
+        {/* Registro */}
+        <Route path='/registro' element={<Registro />} />
         <Route path='/menu' element = {<Menu />} />
         {/* Ruta opcional para Box si la quieres ver */}
         <Route path='/box' element={<Box />} />

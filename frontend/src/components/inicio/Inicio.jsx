@@ -1,6 +1,19 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Inicio.css';
 
 function Inicio() {
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+
+  const handleAplicar = () => {
+    if (email.trim()) {
+      navigate('/registro', { state: { email } });
+    } else {
+      alert('Por favor ingresa tu correo electrónico');
+    }
+  };
+
   return (
     <main className="inicio">
       {/* Hero */}
@@ -22,8 +35,13 @@ function Inicio() {
                 placeholder="Escribe tu correo electrónico"
                 aria-label="Correo electrónico"
                 className="input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAplicar()}
               />
-              <button className="button">Aplicar ahora</button>
+              <button className="button" onClick={handleAplicar}>
+                Aplicar ahora
+              </button>
             </div>
             <p className="helper">
               Al continuar aceptas nuestros términos y políticas.
