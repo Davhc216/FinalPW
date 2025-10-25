@@ -137,11 +137,31 @@
     padding: 10px 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center; /* centra el contenido horizontalmente */
+    text-align: center;      /* asegura que el texto se centre */
+    gap: 0;                  /* sin espacio extra al ocultar el icono */
     box-shadow: var(--shadow);
     font-weight: 600;
+    cursor: default;
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+    will-change: transform;
 }
-.benefit__icon{ font-size: 18px; }
+.benefit__icon{ font-size: 18px; display: none; }
+
+/* Hover grow/shrink effect dentro del grupo (solo en dispositivos con hover) */
+@media (hover: hover) and (pointer: fine){
+  .benefits__list:hover .benefit{ 
+      transform: scale(0.95);
+      opacity: .75;
+  }
+  .benefits__list:hover .benefit:hover{
+      transform: scale(1.06);
+      opacity: 1;
+      z-index: 1;
+  }
+}
 
 /* Productos */
 .productos{ padding: 52px 0 80px 0; }

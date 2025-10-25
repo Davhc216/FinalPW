@@ -20,7 +20,6 @@ function Inicio() {
       <section className="hero">
         <div className="container hero__content">
           <div className="hero__text">
-            <p className="eyebrow">Inicio</p>
             <h1 className="hero__title">
               Elige un <span className="highlight">nuevo</span> inicio para tus
               finanzas
@@ -59,19 +58,19 @@ function Inicio() {
       <section className="benefits container" aria-label="Beneficios">
         <ul className="benefits__list">
           <li className="benefit">
-            <span className="benefit__icon">⚡</span>
+            <span className="benefit__icon"></span>
             Rápido y sin costos
           </li>
           <li className="benefit">
-            <span className="benefit__icon">🔒</span>
+            <span className="benefit__icon"></span>
             Seguridad de nivel bancario
           </li>
           <li className="benefit">
-            <span className="benefit__icon">📱</span>
+            <span className="benefit__icon"></span>
             100% digital
           </li>
           <li className="benefit">
-            <span className="benefit__icon">💜</span>
+            <span className="benefit__icon"></span>
             Soporte que sí responde
           </li>
         </ul>

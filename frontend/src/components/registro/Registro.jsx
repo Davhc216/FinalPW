@@ -37,8 +37,13 @@ function Registro() {
     }
 
     console.log('Datos de registro:', formData);
-    alert('¡Registro exitoso! (Por ahora solo es demostración)');
-    // Aquí irá la lógica de registro real más adelante
+    
+    // Redirigir al Dashboard con los datos del usuario
+    navigate('/dashboard', { 
+      state: { 
+        userData: formData 
+      } 
+    });
   };
 
   return (

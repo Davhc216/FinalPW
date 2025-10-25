@@ -21,10 +21,22 @@
   padding: 10px 14px;
 }
 
+.header__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .brand{
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand:hover {
+  opacity: 0.8;
 }
 
 .header__logo{
@@ -38,4 +50,42 @@
   font-weight: 800;
   font-size: 20px;
   color: var(--nu-purple);
+}
+
+/* Navegación */
+.header__nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav__link {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nu-purple);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  background: transparent;
+}
+
+.nav__link:hover {
+  background: rgba(130, 10, 209, 0.1);
+}
+
+.nav__link--active {
+  background: var(--nu-purple);
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .header__nav {
+    display: none;
+  }
+  
+  .header__inner {
+    width: 92%;
+  }
 }

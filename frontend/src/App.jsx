@@ -5,6 +5,9 @@ import './App.css'
 import Inicio from './components/inicio/Inicio';
 import Header from './components/header/Header';
 import Registro from './components/registro/Registro';
+import Dashboard from './components/dashboard/Dashboard';
+import Transacciones from './components/transacciones/Transacciones';
+import Prestamos from './components/prestamos/Prestamos';
 import Box from './components/box/Box';
 import Menu from './components/menu/Menu';
 
@@ -19,6 +22,13 @@ function App() {
         <Route path='/inicio' element={<Navigate to="/" replace />} />
         {/* Registro */}
         <Route path='/registro' element={<Registro />} />
+        {/* Dashboard - Gestión de cuentas */}
+        <Route path='/dashboard' element={<Dashboard />} />
+        {/* Transacciones */}
+        <Route path='/transacciones' element={<Transacciones />} />
+        {/* Préstamos */}
+        <Route path='/prestamos' element={<Prestamos />} />
+        {/* Menu */}
         <Route path='/menu' element = {<Menu />} />
         {/* Ruta opcional para Box si la quieres ver */}
         <Route path='/box' element={<Box />} />
