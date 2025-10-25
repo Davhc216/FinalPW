@@ -1,0 +1,198 @@
+/* Dashboard - Gestión de cuentas */
+/* Simplified Dashboard styles */
+.dashboard {
+  min-height: 100vh;
+  background: #f3ebff;
+  padding: 32px 0 80px;
+  border-radius: 24px;
+}
+.dashboard__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 92%;
+}
+.dashboard__header { margin-bottom: 32px; }
+.dashboard__title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #0f0f14;
+}
+.dashboard__subtitle {
+  color: #6b6b76;
+  font-size: 1rem;
+  margin: 0;
+}
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.card__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f0f14;
+}
+.card__badge {
+  background: #f3ebff;
+  color: #820ad1;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.card--saldo {
+  grid-column: span 7;
+  background: linear-gradient(135deg, var(--nu-purple) 0%, var(--nu-purple-600) 100%);
+  color: #fff;
+}
+
+.card--saldo .card__title,
+.card--saldo .card__badge {
+  color: #fff !important;
+  background: transparent;
+}
+
+.saldo__amount {
+  font-size: clamp(36px, 4vw, 48px);
+  font-weight: 800;
+  margin: 20px 0;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Perfil */
+.card--perfil {
+  grid-column: span 5;
+}
+
+.perfil__info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.perfil__info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.perfil__label {
+  font-size: 13px;
+  color: var(--nu-muted);
+}
+
+.perfil__value {
+  font-size: 15px;
+  color: var(--nu-text);
+  font-weight: 600;
+}
+
+/* Transacciones */
+.card--transacciones {
+  grid-column: span 8;
+}
+
+.transacciones__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaccion__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--nu-bg);
+  border-radius: var(--radius-md);
+}
+
+.transaccion__concepto {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--nu-text);
+}
+
+.transaccion__desde {
+  font-size: 13px;
+  color: var(--nu-muted);
+  margin: 0;
+}
+
+.transaccion__right {
+  text-align: right;
+}
+
+.transaccion__monto {
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--nu-text);
+}
+
+.transaccion__fecha {
+  font-size: 12px;
+  color: var(--nu-muted);
+  margin: 0;
+}
+
+/* Botones */
+.btn--link {
+  background: transparent;
+  color: var(--nu-purple);
+  padding: 8px 0;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: opacity 0.15s ease;
+}
+
+.btn--link:hover {
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card--saldo,
+  .card--perfil,
+  .card--transacciones {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard {
+    padding: 20px 0 60px 0;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .saldo__amount {
+    font-size: clamp(26px, 7vw, 36px);
+  }
+}
