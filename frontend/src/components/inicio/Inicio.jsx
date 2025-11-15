@@ -42,6 +42,19 @@ function Inicio() {
                 Aplicar ahora
               </button>
             </div>
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button 
+                className="button" 
+                onClick={() => navigate('/login')}
+                style={{ 
+                  background: 'transparent', 
+                  border: '2px solid currentColor',
+                  marginTop: '0.5rem'
+                }}
+              >
+                Ya tengo cuenta
+              </button>
+            </div>
             <p className="helper">
               Al continuar aceptas nuestros términos y políticas.
             </p>

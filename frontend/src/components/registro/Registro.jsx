@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { register } from '../../services/api';
 import './Registro.css';
 
 function Registro() {
@@ -14,36 +15,79 @@ function Registro() {
     segundoNombre: '',
     primerApellido: '',
     segundoApellido: '',
-    celular: ''
+    celular: '',
+    password: '',
+    confirmaPassword: ''
   });
+
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setError(''); // Limpiar error al escribir
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
     
     // Validaciones básicas
     if (formData.correo !== formData.confirmaCorreo) {
-      alert('Los correos no coinciden');
+      setError('Los correos no coinciden');
+      setLoading(false);
       return;
     }
 
-    if (!formData.correo || !formData.primerNombre || !formData.primerApellido || !formData.celular) {
-      alert('Por favor completa todos los campos obligatorios');
+    if (formData.password !== formData.confirmaPassword) {
+      setError('Las contraseñas no coinciden');
+      setLoading(false);
       return;
     }
 
-    console.log('Datos de registro:', formData);
-    
-    // Redirigir al Dashboard con los datos del usuario
-    navigate('/dashboard', { 
-      state: { 
-        userData: formData 
-      } 
-    });
+    if (!formData.correo || !formData.primerNombre || !formData.primerApellido || !formData.password) {
+      setError('Por favor completa todos los campos obligatorios');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Concatenar nombres y apellidos
+      const nombreCompleto = [
+        formData.primerNombre,
+        formData.segundoNombre,
+        formData.primerApellido,
+        formData.segundoApellido
+      ].filter(Boolean).join(' ');
+
+      // Llamar a la API de registro
+      const response = await register(
+        nombreCompleto,
+        formData.correo,
+        formData.password
+      );
+
+      // Guardar datos del usuario en localStorage
+      localStorage.setItem('usuario_id', response.user.id);
+      localStorage.setItem('usuario_nombre', response.user.nombre);
+      localStorage.setItem('usuario_email', response.user.email);
+      localStorage.setItem('usuario_saldo', '0');
+
+      // Redirigir al Dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Error al registrar usuario. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,6 +101,12 @@ function Registro() {
         </div>
 
         <form className="registro__form" onSubmit={handleSubmit}>
+          {error && (
+            <div className="alert alert--error">
+              {error}
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="correo" className="form-label">
               Correo electrónico *
@@ -70,6 +120,7 @@ function Registro() {
               onChange={handleChange}
               placeholder="tu@correo.com"
               required
+              disabled={loading}
             />
           </div>
 
@@ -86,6 +137,7 @@ function Registro() {
               onChange={handleChange}
               placeholder="tu@correo.com"
               required
+              disabled={loading}
             />
           </div>
 
@@ -157,7 +209,7 @@ function Registro() {
 
           <div className="form-group">
             <label htmlFor="celular" className="form-label">
-              Celular *
+              Celular
             </label>
             <input
               type="tel"
@@ -168,13 +220,50 @@ function Registro() {
               onChange={handleChange}
               placeholder="3001234567"
               pattern="[0-9]{10}"
-              required
+              disabled={loading}
             />
-            <span className="form-hint">10 dígitos sin espacios</span>
+            <span className="form-hint">10 dígitos sin espacios (opcional)</span>
           </div>
 
-          <button type="submit" className="submit-button">
-            Crear cuenta
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
+              Contraseña *
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="form-input"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Mínimo 6 caracteres"
+              required
+              minLength={6}
+              disabled={loading}
+            />
+            <span className="form-hint">Mínimo 6 caracteres</span>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmaPassword" className="form-label">
+              Confirma tu contraseña *
+            </label>
+            <input
+              type="password"
+              id="confirmaPassword"
+              name="confirmaPassword"
+              className="form-input"
+              value={formData.confirmaPassword}
+              onChange={handleChange}
+              placeholder="Repite tu contraseña"
+              required
+              minLength={6}
+              disabled={loading}
+            />
+          </div>
+
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? 'Creando cuenta...' : 'Crear cuenta'}
           </button>
 
           <button type="button" className="back-button-bottom" onClick={() => navigate(-1)}>

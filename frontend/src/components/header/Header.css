@@ -79,6 +79,21 @@
   color: #fff;
 }
 
+.nav__link--logout {
+  color: #e53e3e !important;
+}
+
+.nav__link--logout:hover {
+  background: rgba(229, 62, 62, 0.1) !important;
+}
+
+.nav__user {
+  padding: 8px 16px;
+  color: #718096;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .header__nav {

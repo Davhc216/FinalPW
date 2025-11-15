@@ -1,27 +1,83 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPrestamo } from '../../services/api';
 import './Prestamos.css';
 
-const initialState = { monto: '', plazo: '', proposito: '', ingresos: '', ocupacion: '', aceptaTerminos: false };
+const initialState = {
+  monto: '',
+  plazo: '',
+  proposito: '',
+  ingresos: '',
+  ocupacion: '',
+  aceptaTerminos: false
+};
 
 function Prestamos() {
   const navigate = useNavigate();
+  const usuarioId = parseInt(localStorage.getItem('usuario_id') || '0');
+
   const [form, setForm] = useState(initialState);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
     setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+    setError('');
   };
-  const handleNum = name => e => setForm(f => ({ ...f, [name]: e.target.value.replace(/\D/g, '') }));
+
+  const handleNum = name => e => {
+    const value = e.target.value.replace(/\D/g, '');
+    setForm(f => ({ ...f, [name]: value }));
+  };
+
   const formatCurrency = v => v ? new Intl.NumberFormat('es-CO').format(v.replace(/\D/g, '')) : '';
-  const handleSubmit = e => {
+
+  const handleSubmit = async e => {
     e.preventDefault();
+    setError('');
+
+    if (!usuarioId) {
+      setError('Debes iniciar sesión para solicitar un préstamo');
+      navigate('/login');
+      return;
+    }
+
     const { monto, plazo, ingresos, aceptaTerminos } = form;
-    if (!monto || !plazo || !ingresos) return alert('Por favor completa todos los campos obligatorios');
-    if (!aceptaTerminos) return alert('Debes aceptar los términos y condiciones');
-    alert(`Solicitud de préstamo por $${formatCurrency(monto)} enviada correctamente (demo)`);
-    navigate('/dashboard');
+    
+    if (!monto || !plazo || !ingresos) {
+      setError('Por favor completa todos los campos obligatorios');
+      return;
+    }
+
+    if (!aceptaTerminos) {
+      setError('Debes aceptar los términos y condiciones');
+      return;
+    }
+
+    if (parseFloat(monto) <= 0) {
+      setError('El monto debe ser mayor a 0');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await createPrestamo(
+        usuarioId,
+        parseFloat(monto),
+        parseInt(plazo),
+        5.00 // Tasa de interés por defecto
+      );
+      
+      alert(`Solicitud de préstamo por $${formatCurrency(monto)} enviada correctamente`);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Error al solicitar el préstamo');
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <main className="prestamos">
       <div className="prestamos__container">
@@ -30,23 +86,49 @@ function Prestamos() {
             <h1 className="prestamos__title">Solicitud de Préstamo</h1>
             <p className="prestamos__subtitle">Completa el formulario y obtén una respuesta en minutos</p>
           </div>
-          <button className="btn-back" onClick={() => navigate('/dashboard')}>← Volver al inicio</button>
+          <button className="btn-back" onClick={() => navigate('/dashboard')} disabled={loading}>
+            ← Volver al inicio
+          </button>
         </div>
         <div className="prestamos__content">
           <form className="prestamo-form" onSubmit={handleSubmit}>
+            {error && (
+              <div className="alert alert--error">
+                {error}
+              </div>
+            )}
+
             <div className="form-section">
               <h2 className="section-title">Detalles del préstamo</h2>
               <div className="form-group">
                 <label htmlFor="monto" className="form-label">¿Cuánto dinero necesitas? *</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">$</span>
-                  <input type="text" id="monto" name="monto" className="form-input form-input--with-prefix" value={formatCurrency(form.monto)} onChange={handleNum('monto')} placeholder="0" required />
+                  <input
+                    type="text"
+                    id="monto"
+                    name="monto"
+                    className="form-input form-input--with-prefix"
+                    value={formatCurrency(form.monto)}
+                    onChange={handleNum('monto')}
+                    placeholder="0"
+                    required
+                    disabled={loading}
+                  />
                 </div>
                 <span className="form-hint">Monto entre $500,000 y $50,000,000</span>
               </div>
               <div className="form-group">
                 <label htmlFor="plazo" className="form-label">¿En cuántos meses quieres pagarlo? *</label>
-                <select id="plazo" name="plazo" className="form-input" value={form.plazo} onChange={handleChange} required>
+                <select
+                  id="plazo"
+                  name="plazo"
+                  className="form-input"
+                  value={form.plazo}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                >
                   <option value="">Selecciona el plazo</option>
                   <option value="6">6 meses</option>
                   <option value="12">12 meses (1 año)</option>
@@ -59,7 +141,15 @@ function Prestamos() {
               </div>
               <div className="form-group">
                 <label htmlFor="proposito" className="form-label">¿Para qué lo necesitas? *</label>
-                <select id="proposito" name="proposito" className="form-input" value={form.proposito} onChange={handleChange} required>
+                <select
+                  id="proposito"
+                  name="proposito"
+                  className="form-input"
+                  value={form.proposito}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                >
                   <option value="">Selecciona una opción</option>
                   <option value="vivienda">Vivienda</option>
                   <option value="vehiculo">Vehículo</option>
@@ -77,13 +167,31 @@ function Prestamos() {
                 <label htmlFor="ingresos" className="form-label">Ingresos mensuales *</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">$</span>
-                  <input type="text" id="ingresos" name="ingresos" className="form-input form-input--with-prefix" value={formatCurrency(form.ingresos)} onChange={handleNum('ingresos')} placeholder="0" required />
+                  <input
+                    type="text"
+                    id="ingresos"
+                    name="ingresos"
+                    className="form-input form-input--with-prefix"
+                    value={formatCurrency(form.ingresos)}
+                    onChange={handleNum('ingresos')}
+                    placeholder="0"
+                    required
+                    disabled={loading}
+                  />
                 </div>
                 <span className="form-hint">Incluye todas las fuentes de ingreso</span>
               </div>
               <div className="form-group">
                 <label htmlFor="ocupacion" className="form-label">Ocupación actual *</label>
-                <select id="ocupacion" name="ocupacion" className="form-input" value={form.ocupacion} onChange={handleChange} required>
+                <select
+                  id="ocupacion"
+                  name="ocupacion"
+                  className="form-input"
+                  value={form.ocupacion}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                >
                   <option value="">Selecciona tu ocupación</option>
                   <option value="empleado">Empleado</option>
                   <option value="independiente">Independiente</option>
@@ -96,13 +204,22 @@ function Prestamos() {
             </div>
             <div className="form-section">
               <label className="checkbox-label">
-                <input type="checkbox" name="aceptaTerminos" checked={form.aceptaTerminos} onChange={handleChange} required />
+                <input
+                  type="checkbox"
+                  name="aceptaTerminos"
+                  checked={form.aceptaTerminos}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                />
                 <span>
                   Acepto los <a href="#" className="link">términos y condiciones</a> y autorizo la consulta de mis datos en centrales de riesgo
                 </span>
               </label>
             </div>
-            <button type="submit" className="submit-btn">Solicitar préstamo</button>
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? 'Enviando solicitud...' : 'Solicitar préstamo'}
+            </button>
           </form>
         </div>
       </div>
