@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  email     String    @unique
+  password  String
+  saldo     Float     @default(0)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt      @map("updated_at")
+
+  transacciones        Transaccion[] @relation("UsuarioTransacciones")
+  transaccionesDestino Transaccion[] @relation("UsuarioDestino")
+  prestamos            Prestamo[]
+
+  @@map("usuarios")
+}
+
+model Transaccion {
+  id               Int       @id @default(autoincrement())
+  usuarioId        Int       @map("usuario_id")
+  tipo             String    // 'deposito', 'retiro', 'transferencia'
+  monto            Float
+  descripcion      String?
+  usuarioDestinoId Int?      @map("usuario_destino_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  usuario        Usuario  @relation("UsuarioTransacciones", fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioDestino Usuario? @relation("UsuarioDestino", fields: [usuarioDestinoId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId])
+  @@map("transacciones")
+}
+
+model Prestamo {
+  id               Int       @id @default(autoincrement())
+  usuarioId        Int       @map("usuario_id")
+  monto            Float
+  tasaInteres      Float     @default(5.00) @map("tasa_interes")
+  plazoMeses       Int       @map("plazo_meses")
+  estado           String    @default("pendiente")
+  fechaSolicitud   DateTime  @default(now()) @map("fecha_solicitud")
+  fechaAprobacion  DateTime? @map("fecha_aprobacion")
+  fechaVencimiento DateTime? @map("fecha_vencimiento")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("prestamos")
+}
+
